@@ -1,4 +1,4 @@
-NOOB-Siren
-==========
+NOOB
+====
 
-NOOB Arduino powered Siren app
+Notification Bot. Arduino Controlled Notification System.

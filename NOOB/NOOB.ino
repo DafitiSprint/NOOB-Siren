@@ -17,68 +17,46 @@ int pin = 6;
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x00, 0xF2, 0x78 };
 
-int ethernetStatus = 0;
-
 void setup()
 {
   Serial.begin(9600);
   Serial.println("START");
-
+  
+  Ethernet.begin(mac); // initialize ethernet
+  Serial.print("Ethernet Connected - IP: ");
+  Serial.println(Ethernet.localIP()); // printout IP address for debug purposes
+  delay(300); // this is arduino baby ;-)
+    
   siren = new Siren(pin);
-  websocket = new Websocket(client, host, "/", port);
+  websocket = new Websocket(client, host, "/?type=siren", port);
 
-  _ethernetConnect();
-
-  Serial.println("Connecting...");
-  websocket->connect();
 }
 
 void loop()
 {
-  if (!ethernetStatus || !client.available()) {
-    Serial.println("Ethernet connection is offline");
-    delay(5000);
-
-    Serial.println("Trying to reconnect the ethernet");
-    _ethernetConnect();
-  }
-
-  if (websocket->isConnected()) {
-     Serial.println("Connected");
-
-     String data = websocket->getData();
-
-     if (data.length() > 0) {
-       siren->setDelay(data.toInt());
-       siren->on();
-       siren->off();
-     }
-
-     return;
-  }
-
-  Serial.println("Connection failed");
-  delay(5000);
-
-  Serial.println("Trying to reconnect");
-  delay(5000);
-
-  websocket->connect();
-  delay(5000);
-}
-
-void _ethernetConnect()
-{
-  Serial.println("Starting Ethernet");
-  delay(5000);
-
-  ethernetStatus = Ethernet.begin(mac);
-
-  if (!ethernetStatus) {
-    Serial.println("Was not possible to assign the IP");
+  if (!websocket->isConnected()) {
+    Serial.println("Websocket is not Connected");
+    _websocketConnect();
     return;
   }
+     //Serial.println("Connected");
 
-  Serial.print("IP Address: ");
-  Serial.println(Ethernet.localIP());
+  String data = websocket->getData();
+
+  if (data.length() > 0) {
+     Serial.println("Message Received");
+     Serial.println(data);
+     int div = data.indexOf('-');
+     siren->setDelay(data.substring(0, div).toInt());
+     Serial.println(data.substring(0, div).toInt());
+     siren->setRepeat(data.substring(div + 1, data.length()).toInt());
+     Serial.println(data.substring(div + 1, data.length()).toInt());
+     siren->blink();
+  }
+}
+
+void _websocketConnect()
+{
+  Serial.println("Connecting Websocket");
+  websocket->connect();
 }

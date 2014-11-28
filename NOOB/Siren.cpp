@@ -5,11 +5,12 @@
 #include "Arduino.h"
 #include "Siren.h"
 
-Siren::Siren(int portId, int delay)
+Siren::Siren(int portId, int delay, int repeat)
 {
   pinMode(portId, OUTPUT);
   _portId = portId;
   _delay  = delay;
+  _repeat = repeat;
 }
 
 void Siren::on() {
@@ -24,4 +25,15 @@ void Siren::off() {
 
 void Siren::setDelay(int delay) {
   _delay = delay;
+}
+
+void Siren::setRepeat(int repeat) {
+  _repeat = repeat;
+}
+
+void Siren::blink() {
+  for(int i=0; i<=_repeat; i++) {
+    on();
+    off();
+  }
 }

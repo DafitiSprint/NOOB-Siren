@@ -12,8 +12,8 @@ Websocket *websocket;
 
 char *host = "0.0.0.0";
 int port = 80;
-int pin = 13;
-int refreshConnection = 3000;
+int pin = 6;
+int refreshConnection = 150;
 int count = 0;
 
 byte mac[] = {

@@ -22,8 +22,10 @@ class Websocket
   public:
   Websocket(EthernetClient client, char *host, char *path = "/", int port = 80);
   void connect();
+  void disconnect();
   bool isConnected();
   char* getData();
+  void sendData(char *str);
 
 };
 

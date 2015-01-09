@@ -12,7 +12,9 @@ Websocket *websocket;
 
 char *host = "0.0.0.0";
 int port = 80;
-int pin = 6;
+int pin = 13;
+int refreshConnection = 3000;
+int count = 0;
 
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x00, 0xF2, 0x78 };
@@ -29,7 +31,6 @@ void setup()
     
   siren = new Siren(pin);
   websocket = new Websocket(client, host, "/?type=siren", port);
-
 }
 
 void loop()
@@ -39,10 +40,11 @@ void loop()
     _websocketConnect();
     return;
   }
-     //Serial.println("Connected");
+//  Serial.println("Connected");
+  count = count + 1;
+//  Serial.println(count);
 
   String data = websocket->getData();
-
   if (data.length() > 0) {
      Serial.println("Message Received");
      Serial.println(data);
@@ -52,7 +54,16 @@ void loop()
      siren->setRepeat(data.substring(div + 1, data.length()).toInt());
      Serial.println(data.substring(div + 1, data.length()).toInt());
      siren->blink();
+     count = 0;
+  } else if (count >= refreshConnection) {
+    //Disconect to refresh connection
+    Serial.println("Disconecting from server");
+    websocket->disconnect();
+    count = 0;
+    delay(3000);  // wait to fully let the client disconnect
   }
+  
+  delay(3000);  // wait to fully let the client disconnect
 }
 
 void _websocketConnect()

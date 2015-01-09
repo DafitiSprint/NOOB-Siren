@@ -1,0 +1,4 @@
+*.lock
+
+# Mac finder artifacts
+.DS_Store

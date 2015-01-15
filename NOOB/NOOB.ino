@@ -13,6 +13,7 @@ Websocket *websocket;
 char *host = "0.0.0.0";
 int port = 80;
 int pin = 6;
+<<<<<<< HEAD
 int refreshConnection = 180;
 int count = 0;
 

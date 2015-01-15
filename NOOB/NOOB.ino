@@ -13,7 +13,6 @@ Websocket *websocket;
 char *host = "0.0.0.0";
 int port = 80;
 int pin = 6;
-<<<<<<< HEAD
 int refreshConnection = 180;
 int count = 0;
 
@@ -61,7 +60,7 @@ void loop()
   } else if (count >= refreshConnection) {
     //Refresh connection
     Serial.println("Refresh connection");
-    websocket->send("refresh");
+    websocket->sendData("refresh");
     count = 0;
   }
   

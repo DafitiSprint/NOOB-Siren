@@ -66,7 +66,7 @@ char* Websocket::getData()
   return _wsClient.getData();
 }
 
-void Websocket::sendData(char *str)
+void Websocket::sendData(String str)
 {
   _wsClient.sendData(str);
 }

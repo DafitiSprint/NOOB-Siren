@@ -25,7 +25,7 @@ class Websocket
   void disconnect();
   bool isConnected();
   char* getData();
-  void sendData(char *str);
+  void sendData(String str);
 
 };
 

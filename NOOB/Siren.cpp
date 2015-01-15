@@ -7,10 +7,10 @@
 
 Siren::Siren(int portId, int delay, int repeat)
 {
-  pinMode(portId, OUTPUT);
   _portId = portId;
   _delay  = delay;
   _repeat = repeat;
+  pinMode(_portId, OUTPUT);
 }
 
 void Siren::on() {

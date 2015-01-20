@@ -13,6 +13,8 @@ Websocket *websocket;
 char *host = "0.0.0.0";
 int port = 80;
 int pin = 6;
+int refreshConnection = 180;
+int count = 0;
 
 byte mac[] = {
   0x90, 0xA2, 0xDA, 0x00, 0xF2, 0x78 };
@@ -26,10 +28,12 @@ void setup()
   Serial.print("Ethernet Connected - IP: ");
   Serial.println(Ethernet.localIP()); // printout IP address for debug purposes
   delay(300); // this is arduino baby ;-)
-    
-  siren = new Siren(pin);
+  
+  siren = new Siren(pin, 5000);
+  Serial.println("siren");
+  siren->on();
+  siren->off();
   websocket = new Websocket(client, host, "/?type=siren", port);
-
 }
 
 void loop()
@@ -39,10 +43,10 @@ void loop()
     _websocketConnect();
     return;
   }
-     //Serial.println("Connected");
+//  Serial.println("Connected");
+  count = count + 1;
 
   String data = websocket->getData();
-
   if (data.length() > 0) {
      Serial.println("Message Received");
      Serial.println(data);
@@ -52,7 +56,15 @@ void loop()
      siren->setRepeat(data.substring(div + 1, data.length()).toInt());
      Serial.println(data.substring(div + 1, data.length()).toInt());
      siren->blink();
+     count = 0;
+  } else if (count >= refreshConnection) {
+    //Refresh connection
+    Serial.println("Refresh connection");
+    websocket->sendData("refresh");
+    count = 0;
   }
+  
+  delay(1000);  // wait to fully let the client disconnect
 }
 
 void _websocketConnect()

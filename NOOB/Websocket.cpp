@@ -41,13 +41,22 @@ void Websocket::connect()
   _isConnected = true;
 }
 
+void Websocket::disconnect()
+{
+  _isConnected = false;
+  _wsClient.disconnect();
+  Serial.println("Disconected");
+}
+
 bool Websocket::isConnected()
 {
   if (_client.connected() && _isConnected) {
     return true;
   }
-
-  _client.stop();
+  
+  if (_isConnected) {
+    disconnect();
+  }
 
   return false;
 }
@@ -55,4 +64,9 @@ bool Websocket::isConnected()
 char* Websocket::getData()
 {
   return _wsClient.getData();
+}
+
+void Websocket::sendData(String str)
+{
+  _wsClient.sendData(str);
 }
